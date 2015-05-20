@@ -1,0 +1,24 @@
+Function a (b,c)
+   let 
+      integer d,e.
+   do
+      e=b*c;
+      d=b+c;
+      e=e+b;
+      return e;
+   end
+
+
+
+
+let 
+   integer n,x. 
+in 
+read n; 
+if n < 10 then x := 1; else skip; fi; 
+while n < 10 do x := 5*x; n := n+1; end; 
+   skip; 
+   write n; 
+   write x; 
+end 
+
