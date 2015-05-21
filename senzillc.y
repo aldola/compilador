@@ -95,7 +95,7 @@ GRAMMAR RULES for the Simple language
 %% 
 
 program : functions LET declarations IN { gen_code( DATA, data_location() - 1 ); } 
-          commands END { gen_code( HALT, 0 ); YYACCEPT; } 
+	  commands END { gen_code( HALT, 0 ); YYACCEPT; } 
 ; 
 
 functions : /*empty*/
@@ -103,10 +103,12 @@ functions : /*empty*/
 	   | procedure ;
 
 
-procedure : Procedure id_proc '(' declarations ')' LET declarations DO commands END ;
-function : Function id_funct '(' declarations ')' LET declarations DO commands END ;
+procedure : Procedure id_proc '('declarations')'{ gen_code( DATA, data_location() - 1 ); } 
+            LET declarations DO commands END { };
 
-id_proc: IDENTIFIER { install( $1 ); }  ;
+function : Function id_funct '('declarations')' LET declarations DO commands END;
+
+id_proc: IDENTIFIER { install( $1 );}  ;
 
 id_funct: IDENTIFIER { install( $1 ); }  ;
 

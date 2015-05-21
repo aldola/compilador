@@ -1,16 +1,3 @@
-Function a (b,c)
-   let 
-      integer d,e.
-   do
-      e=b*c;
-      d=b+c;
-      e=e+b;
-      return e;
-   end
-
-
-
-
 let 
    integer n,x. 
 in 

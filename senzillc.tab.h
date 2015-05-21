@@ -61,7 +61,9 @@ extern int yydebug;
      WRITE = 270,
      LET = 271,
      IN = 272,
-     ASSGNOP = 273
+     Procedure = 273,
+     Function = 274,
+     ASSGNOP = 275
    };
 #endif
 
@@ -80,7 +82,7 @@ semrec
 
 
 /* Line 2058 of yacc.c  */
-#line 84 "senzillc.tab.h"
+#line 86 "senzillc.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

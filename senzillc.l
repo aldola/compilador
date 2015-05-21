@@ -59,6 +59,8 @@ then { return(THEN); }
 while { return(WHILE); } 
 write { return(WRITE); } 
 {ID} { yylval.id = (char *) strdup(yytext); return(IDENTIFIER); } 
+Procedure {return(Procedure); printf("procedure");}
+Function { return(Function);}
 [ \t\n]+ /* eat up whitespace */ 
 
 
