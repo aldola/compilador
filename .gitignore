@@ -3,6 +3,9 @@
 *.yy.c
 *.pdf
 *.byte
+*.l~
+*.y~
+*.sz~
 assembler
 dissas
 senzillc
