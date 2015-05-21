@@ -2,6 +2,7 @@
 ###################
 *.yy.c
 *.pdf
+*.byte
 assembler
 dissas
 senzillc
