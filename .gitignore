@@ -1,0 +1,8 @@
+# Compiled source #
+###################
+*.yy.c
+*.pdf
+assembler
+dissas
+senzillc
+VM
