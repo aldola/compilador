@@ -103,8 +103,8 @@ functions : /*empty*/
 	   | procedure ;
 
 
-procedure : Procedure id_proc '('declarations')'{ gen_code( DATA, data_location() - 1 ); } 
-            LET declarations DO commands END { };
+procedure : Procedure id_proc '('declarations')' { gen_code( DATA, data_location() - 1 ); } 
+	    LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END{ gen_code(RET,0); } ;
 
 function : Function id_funct '('declarations')' LET declarations DO commands END;
 
