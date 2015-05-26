@@ -18,7 +18,7 @@ C Libraries, Symbol Table, Code Generator & other C code
 static FILE *f;
 int yyerror(char *);
 int yylex();
-
+struct lbs *a;
 int errors; /* Error Count */ 
 /*------------------------------------------------------------------------- 
 The following support backpatching 
@@ -94,8 +94,9 @@ GRAMMAR RULES for the Simple language
 
 %% 
 
-program : functions LET declarations IN { gen_code( DATA, data_location() - 1 ); } 
-	  commands END { gen_code( HALT, 0 ); YYACCEPT; } 
+program :  { a = (struct lbs *) newlblrec(); a->for_jmp_false = reserve_loc(); } functions { back_patch( a->for_goto, GOTO, gen_label() ); } 
+	  LET declarations IN { gen_code( DATA, data_location() - 1 );printf("HIHI"); } 
+	  commands END {printf("2222"); gen_code( HALT, 0 ); YYACCEPT; } 
 ; 
 
 functions : /*empty*/
@@ -104,9 +105,10 @@ functions : /*empty*/
 
 
 procedure : Procedure id_proc '('declarations')' { gen_code( DATA, data_location() - 1 ); } 
-	    LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END{ gen_code(RET,0); } ;
+	    LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } ;
 
-function : Function id_funct '('declarations')' LET declarations DO commands END;
+function : Function id_funct '('declarations')'{ gen_code( DATA, data_location() - 1 ); }  
+           LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } ;
 
 id_proc: IDENTIFIER { install( $1 );}  ;
 
@@ -135,11 +137,19 @@ command : SKIP
    | WHILE { $1 = (struct lbs *) newlblrec(); $1->for_goto = gen_label(); } 
    bool_exp { $1->for_jmp_false = reserve_loc(); } DO commands END { gen_code( GOTO, $1->for_goto ); 
    back_patch( $1->for_jmp_false, JMP_FALSE, gen_label() ); }
+   | IDENTIFIER '(' variables ')' {printf("HHUIHIUHHUHU");}
 ;
 
 bool_exp : exp '<' exp { gen_code( LT, 0 ); } 
    | exp '=' exp { gen_code( EQ, 0 ); } 
    | exp '>' exp { gen_code( GT, 0 ); } 
+;
+
+variables: /* empty */ 
+	| llist_exp exp '.'
+;
+llist_exp: /* empty */ 
+	| llist_exp exp ','
 ;
 
 exp : NUMBER { gen_code( LD_INT, $1 ); } 

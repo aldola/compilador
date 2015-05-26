@@ -59,11 +59,11 @@ then { return(THEN); }
 while { return(WHILE); } 
 write { return(WRITE); } 
 {ID} { yylval.id = (char *) strdup(yytext); return(IDENTIFIER); } 
-Procedure {return(Procedure); printf("procedure");}
+Procedure {return(Procedure);}
 Function { return(Function);}
 [ \t\n]+ /* eat up whitespace */ 
 
-
+ /* include i comentaris */
 {inc} { BEGIN(I_include); } 
 "/*"  { BEGIN(C_COMMENTA); }
 
@@ -108,8 +108,9 @@ Function { return(Function);}
 		}
 		includecont++;
 		file = malloc(strlen(yytext)+13);
-		strcpy(file, "/usr/include/");
-		strcat(file, out);
+		//strcpy(file, "/usr/include/");
+		//strcat(file, out);
+		strcpy(file, out);
 		if(access( file, F_OK ) != -1){
 			yyin = fopen( file, "r" );
 			file="";
