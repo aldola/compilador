@@ -29,9 +29,20 @@ struct lbs /* Labels for data, if and while */
   int for_jmp_false; 
 }; 
 
+struct fpm /* Labels for data, if and while */ 
+{ 
+  int for_goto; 
+  int for_jmp_false; 
+};
+
 struct lbs * newlblrec() /* Allocate space for the labels */ 
 { 
    return (struct lbs *) malloc(sizeof(struct lbs)); 
+}
+
+struct fpm * newlblrec() /* Allocate space for the labels */ 
+{ 
+   return (struct fpm *) malloc(sizeof(struct fpm)); 
 }
 
 /*------------------------------------------------------------------------- 
@@ -76,7 +87,8 @@ TOKENS
 %start program 
 %token <intval> NUMBER /* Simple integer */ 
 %token <id> IDENTIFIER /* Simple identifier */ 
-%token <lbls> IF WHILE /* For backpatching labels */ 
+%token <lbls> IF WHILE /* For backpatching labels */
+%token <fpm> Function Procedure /* For backpatching labels */  
 %token SKIP THEN ELSE FI DO END 
 %token INTEGER READ WRITE LET IN Procedure Function 
 %token ASSGNOP 
@@ -104,18 +116,23 @@ functions : /*empty*/
 	   | procedure ;
 
 
-procedure : Procedure id_proc '('declarations')' { gen_code( DATA, data_location() - 1 ); } 
-	    LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } ;
+procedure : Procedure { $1 = (struct fpm *) newlblrec(); $1->for_jmp_false = reserve_loc(); } id_proc '('declarations')' { gen_code( DATA, data_location() - 1 ); } 
+	    LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } 
+;
 
-function : Function id_funct '('declarations')'{ gen_code( DATA, data_location() - 1 ); }  
-           LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } ;
+function : Function { $1 = (struct fpm *) newlblrec(); $1->for_jmp_false = reserve_loc(); } id_funct '('declarations')'{ gen_code( DATA, data_location() - 1 ); }  
+           LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } 
+;
 
-id_proc: IDENTIFIER { install( $1 );}  ;
+id_proc: IDENTIFIER { install( $1 );}  
+;
 
-id_funct: IDENTIFIER { install( $1 ); }  ;
+id_funct: IDENTIFIER { install( $1 ); }  
+;
 
 declarations : /* empty */ 
     | INTEGER id_seq IDENTIFIER '.' { install( $3 ); } 
+    | '(' id_seq IDENTIFIER ')' { install( $3 ); } 
 ; 
 
 id_seq : /* empty */ 
@@ -137,7 +154,7 @@ command : SKIP
    | WHILE { $1 = (struct lbs *) newlblrec(); $1->for_goto = gen_label(); } 
    bool_exp { $1->for_jmp_false = reserve_loc(); } DO commands END { gen_code( GOTO, $1->for_goto ); 
    back_patch( $1->for_jmp_false, JMP_FALSE, gen_label() ); }
-   | IDENTIFIER '(' variables ')' {printf("HHUIHIUHHUHU");}
+   | IDENTIFIER variables {gen_code( CALL, context_check( $1 ) );}
 ;
 
 bool_exp : exp '<' exp { gen_code( LT, 0 ); } 
@@ -147,6 +164,7 @@ bool_exp : exp '<' exp { gen_code( LT, 0 ); }
 
 variables: /* empty */ 
 	| llist_exp exp '.'
+	| '(' llist_exp exp ')'
 ;
 llist_exp: /* empty */ 
 	| llist_exp exp ','
