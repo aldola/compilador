@@ -19,6 +19,7 @@ static FILE *f;
 int yyerror(char *);
 int yylex();
 struct lbs *a;
+struct lbs *b;
 int errors; /* Error Count */ 
 /*------------------------------------------------------------------------- 
 The following support backpatching 
@@ -29,21 +30,12 @@ struct lbs /* Labels for data, if and while */
   int for_jmp_false; 
 }; 
 
-struct fpm /* Labels for data, if and while */ 
-{ 
-  int for_goto; 
-  int for_jmp_false; 
-};
 
 struct lbs * newlblrec() /* Allocate space for the labels */ 
 { 
    return (struct lbs *) malloc(sizeof(struct lbs)); 
 }
 
-struct fpm * newlblrec() /* Allocate space for the labels */ 
-{ 
-   return (struct fpm *) malloc(sizeof(struct fpm)); 
-}
 
 /*------------------------------------------------------------------------- 
 Install identifier & check if previously defined. 
@@ -87,8 +79,7 @@ TOKENS
 %start program 
 %token <intval> NUMBER /* Simple integer */ 
 %token <id> IDENTIFIER /* Simple identifier */ 
-%token <lbls> IF WHILE /* For backpatching labels */
-%token <fpm> Function Procedure /* For backpatching labels */  
+%token <lbls> IF WHILE Function Procedure/* For backpatching labels */ 
 %token SKIP THEN ELSE FI DO END 
 %token INTEGER READ WRITE LET IN Procedure Function 
 %token ASSGNOP 
@@ -107,8 +98,8 @@ GRAMMAR RULES for the Simple language
 %% 
 
 program :  { a = (struct lbs *) newlblrec(); a->for_jmp_false = reserve_loc(); } functions { back_patch( a->for_goto, GOTO, gen_label() ); } 
-	  LET declarations IN { gen_code( DATA, data_location() - 1 );printf("HIHI"); } 
-	  commands END {printf("2222"); gen_code( HALT, 0 ); YYACCEPT; } 
+	  LET declarations IN { gen_code( DATA, data_location() - 1 );} 
+	  commands END { gen_code( HALT, 0 ); YYACCEPT; } 
 ; 
 
 functions : /*empty*/
@@ -116,11 +107,11 @@ functions : /*empty*/
 	   | procedure ;
 
 
-procedure : Procedure { $1 = (struct fpm *) newlblrec(); $1->for_jmp_false = reserve_loc(); } id_proc '('declarations')' { gen_code( DATA, data_location() - 1 ); } 
+procedure : Procedure {b = (struct lbs *) newlblrec(); b->for_jmp_false = reserve_loc(); } id_proc declarations { gen_code( DATA, data_location() - 1 ); } 
 	    LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } 
 ;
 
-function : Function { $1 = (struct fpm *) newlblrec(); $1->for_jmp_false = reserve_loc(); } id_funct '('declarations')'{ gen_code( DATA, data_location() - 1 ); }  
+function : Function { } id_funct declarations { gen_code( DATA, data_location() - 1 ); }  
            LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } 
 ;
 
@@ -154,7 +145,7 @@ command : SKIP
    | WHILE { $1 = (struct lbs *) newlblrec(); $1->for_goto = gen_label(); } 
    bool_exp { $1->for_jmp_false = reserve_loc(); } DO commands END { gen_code( GOTO, $1->for_goto ); 
    back_patch( $1->for_jmp_false, JMP_FALSE, gen_label() ); }
-   | IDENTIFIER variables {gen_code( CALL, context_check( $1 ) );}
+   | IDENTIFIER variables {back_patch( b->for_goto, CALL, gen_label() );}
 ;
 
 bool_exp : exp '<' exp { gen_code( LT, 0 ); } 

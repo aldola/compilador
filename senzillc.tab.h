@@ -41,19 +41,19 @@
      IDENTIFIER = 259,
      IF = 260,
      WHILE = 261,
-     SKIP = 262,
-     THEN = 263,
-     ELSE = 264,
-     FI = 265,
-     DO = 266,
-     END = 267,
-     INTEGER = 268,
-     READ = 269,
-     WRITE = 270,
-     LET = 271,
-     IN = 272,
-     Procedure = 273,
-     Function = 274,
+     Function = 262,
+     Procedure = 263,
+     SKIP = 264,
+     THEN = 265,
+     ELSE = 266,
+     FI = 267,
+     DO = 268,
+     END = 269,
+     INTEGER = 270,
+     READ = 271,
+     WRITE = 272,
+     LET = 273,
+     IN = 274,
      ASSGNOP = 275
    };
 #endif
@@ -63,12 +63,12 @@
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union 
 /* Line 2068 of yacc.c  */
-#line 66 "senzillc.y"
+#line 69 "senzillc.y"
 semrec
 {
 
 /* Line 2068 of yacc.c  */
-#line 67 "senzillc.y"
+#line 70 "senzillc.y"
  
    int intval; /* Integer values */ 
    char *id; /* Identifiers */ 

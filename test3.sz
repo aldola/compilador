@@ -11,11 +11,6 @@ Procedure a (b,c)
 let 
    integer n,x. 
 in 
-read n;
 a(3,3);
-if n < 10 then x := 1; else skip; fi; 
-while n < 10 do x := 5*x; n := n+1; end; 
-   skip; 
-   write n; 
-   write x; 
+read n;
 end 
