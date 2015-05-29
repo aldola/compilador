@@ -11,6 +11,6 @@ Procedure a (b,c)
 let 
    integer n,x. 
 in 
-a(3,3);
+Procedure a(3,3);
 read n;
 end 

@@ -30,12 +30,21 @@ struct lbs /* Labels for data, if and while */
   int for_jmp_false; 
 }; 
 
+struct fp /* Labels for data, if and while */ 
+{ 
+  int for_call;  
+}; 
+
 
 struct lbs * newlblrec() /* Allocate space for the labels */ 
 { 
    return (struct lbs *) malloc(sizeof(struct lbs)); 
 }
 
+struct fp * newfp() /* Allocate space for the labels */ 
+{ 
+   return (struct fp *) malloc(sizeof(struct fp)); 
+}
 
 /*------------------------------------------------------------------------- 
 Install identifier & check if previously defined. 
@@ -71,6 +80,7 @@ SEMANTIC RECORDS
    int intval; /* Integer values */ 
    char *id; /* Identifiers */ 
    struct lbs *lbls; /* For backpatching */ 
+   struct fp *fps; /* For backpatching */ 
 };
 
 /*========================================================================= 
@@ -79,9 +89,10 @@ TOKENS
 %start program 
 %token <intval> NUMBER /* Simple integer */ 
 %token <id> IDENTIFIER /* Simple identifier */ 
-%token <lbls> IF WHILE Function Procedure/* For backpatching labels */ 
+%token <lbls> IF WHILE /* For backpatching labels */ 
+%token <fps> Function Procedure/* For backpatching labels */ 
 %token SKIP THEN ELSE FI DO END 
-%token INTEGER READ WRITE LET IN Procedure Function 
+%token INTEGER READ WRITE LET IN
 %token ASSGNOP 
 
 /*========================================================================= 
@@ -107,7 +118,7 @@ functions : /*empty*/
 	   | procedure ;
 
 
-procedure : Procedure {b = (struct lbs *) newlblrec(); b->for_jmp_false = reserve_loc(); } id_proc declarations { gen_code( DATA, data_location() - 1 ); } 
+procedure : Procedure { $1 = (struct fp *) newfp(); $1->for_call = gen_label(); } id_proc declarations { gen_code( DATA, data_location() - 1 ); } 
 	    LET declarations { gen_code( DATA, data_location() - 1 ); } DO commands END { gen_code(RET,0); } 
 ;
 
@@ -145,7 +156,7 @@ command : SKIP
    | WHILE { $1 = (struct lbs *) newlblrec(); $1->for_goto = gen_label(); } 
    bool_exp { $1->for_jmp_false = reserve_loc(); } DO commands END { gen_code( GOTO, $1->for_goto ); 
    back_patch( $1->for_jmp_false, JMP_FALSE, gen_label() ); }
-   | IDENTIFIER variables {back_patch( b->for_goto, CALL, gen_label() );}
+   | Procedure IDENTIFIER variables { gen_code( CALL, $1->for_call );}
 ;
 
 bool_exp : exp '<' exp { gen_code( LT, 0 ); } 

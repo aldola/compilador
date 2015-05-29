@@ -1,4 +1,4 @@
-State 40 conflicts: 1 shift/reduce
+State 58 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -65,7 +65,7 @@ Grammar
    34 $@14: /* empty */
 
    35 command: WHILE $@13 bool_exp $@14 DO commands END
-   36        | IDENTIFIER variables
+   36        | Procedure IDENTIFIER variables
 
    37 bool_exp: exp '<' exp
    38         | exp '=' exp
@@ -110,7 +110,7 @@ IDENTIFIER (259) 16 17 19 20 22 26 28 36 46
 IF (260) 32
 WHILE (261) 35
 Function (262) 15
-Procedure (263) 11
+Procedure (263) 11 36
 SKIP (264) 25
 THEN (265) 32
 ELSE (266) 32
@@ -522,54 +522,46 @@ state 37
     IDENTIFIER  shift, and go to state 40
     IF          shift, and go to state 41
     WHILE       shift, and go to state 42
-    SKIP        shift, and go to state 43
-    END         shift, and go to state 44
-    READ        shift, and go to state 45
-    WRITE       shift, and go to state 46
+    Procedure   shift, and go to state 43
+    SKIP        shift, and go to state 44
+    END         shift, and go to state 45
+    READ        shift, and go to state 46
+    WRITE       shift, and go to state 47
 
-    command  go to state 47
+    command  go to state 48
 
 
 state 38
 
    15 function: Function $@7 id_funct declarations $@8 LET declarations $@9 . DO commands END
 
-    DO  shift, and go to state 48
+    DO  shift, and go to state 49
 
 
 state 39
 
    11 procedure: Procedure $@4 id_proc declarations $@5 LET declarations $@6 . DO commands END
 
-    DO  shift, and go to state 49
+    DO  shift, and go to state 50
 
 
 state 40
 
    28 command: IDENTIFIER . ASSGNOP exp
-   36        | IDENTIFIER . variables
 
-    ASSGNOP  shift, and go to state 50
-    '('      shift, and go to state 51
-
-    '('       [reduce using rule 43 (llist_exp)]
-    ';'       reduce using rule 40 (variables)
-    $default  reduce using rule 43 (llist_exp)
-
-    variables  go to state 52
-    llist_exp  go to state 53
+    ASSGNOP  shift, and go to state 51
 
 
 state 41
 
    32 command: IF . bool_exp $@10 THEN commands $@11 ELSE $@12 commands FI
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
-    bool_exp  go to state 57
-    exp       go to state 58
+    bool_exp  go to state 55
+    exp       go to state 56
 
 
 state 42
@@ -578,140 +570,119 @@ state 42
 
     $default  reduce using rule 33 ($@13)
 
-    $@13  go to state 59
+    $@13  go to state 57
 
 
 state 43
+
+   36 command: Procedure . IDENTIFIER variables
+
+    IDENTIFIER  shift, and go to state 58
+
+
+state 44
 
    25 command: SKIP .
 
     $default  reduce using rule 25 (command)
 
 
-state 44
+state 45
 
     4 program: $@1 functions $@2 LET declarations IN $@3 commands END .
 
     $default  reduce using rule 4 (program)
 
 
-state 45
+state 46
 
    26 command: READ . IDENTIFIER
 
-    IDENTIFIER  shift, and go to state 60
-
-
-state 46
-
-   27 command: WRITE . exp
-
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
-
-    exp  go to state 61
+    IDENTIFIER  shift, and go to state 59
 
 
 state 47
 
-   24 commands: commands command . ';'
+   27 command: WRITE . exp
 
-    ';'  shift, and go to state 62
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
+
+    exp  go to state 60
 
 
 state 48
 
+   24 commands: commands command . ';'
+
+    ';'  shift, and go to state 61
+
+
+state 49
+
    15 function: Function $@7 id_funct declarations $@8 LET declarations $@9 DO . commands END
+
+    $default  reduce using rule 23 (commands)
+
+    commands  go to state 62
+
+
+state 50
+
+   11 procedure: Procedure $@4 id_proc declarations $@5 LET declarations $@6 DO . commands END
 
     $default  reduce using rule 23 (commands)
 
     commands  go to state 63
 
 
-state 49
-
-   11 procedure: Procedure $@4 id_proc declarations $@5 LET declarations $@6 DO . commands END
-
-    $default  reduce using rule 23 (commands)
-
-    commands  go to state 64
-
-
-state 50
+state 51
 
    28 command: IDENTIFIER ASSGNOP . exp
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
-    exp  go to state 65
-
-
-state 51
-
-   42 variables: '(' . llist_exp exp ')'
-
-    $default  reduce using rule 43 (llist_exp)
-
-    llist_exp  go to state 66
+    exp  go to state 64
 
 
 state 52
-
-   36 command: IDENTIFIER variables .
-
-    $default  reduce using rule 36 (command)
-
-
-state 53
-
-   41 variables: llist_exp . exp '.'
-   44 llist_exp: llist_exp . exp ','
-
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
-
-    exp  go to state 67
-
-
-state 54
 
    45 exp: NUMBER .
 
     $default  reduce using rule 45 (exp)
 
 
-state 55
+state 53
 
    46 exp: IDENTIFIER .
 
     $default  reduce using rule 46 (exp)
 
 
-state 56
+state 54
 
    52 exp: '(' . exp ')'
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
-    exp  go to state 68
+    exp  go to state 65
 
 
-state 57
+state 55
 
    32 command: IF bool_exp . $@10 THEN commands $@11 ELSE $@12 commands FI
 
     $default  reduce using rule 29 ($@10)
 
-    $@10  go to state 69
+    $@10  go to state 66
 
 
-state 58
+state 56
 
    37 bool_exp: exp . '<' exp
    38         | exp . '=' exp
@@ -722,36 +693,50 @@ state 58
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
-    '<'  shift, and go to state 75
-    '='  shift, and go to state 76
-    '>'  shift, and go to state 77
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
+    '<'  shift, and go to state 72
+    '='  shift, and go to state 73
+    '>'  shift, and go to state 74
 
 
-state 59
+state 57
 
    35 command: WHILE $@13 . bool_exp $@14 DO commands END
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
-    bool_exp  go to state 78
-    exp       go to state 58
+    bool_exp  go to state 75
+    exp       go to state 56
 
 
-state 60
+state 58
+
+   36 command: Procedure IDENTIFIER . variables
+
+    '('  shift, and go to state 76
+
+    '('       [reduce using rule 43 (llist_exp)]
+    ';'       reduce using rule 40 (variables)
+    $default  reduce using rule 43 (llist_exp)
+
+    variables  go to state 77
+    llist_exp  go to state 78
+
+
+state 59
 
    26 command: READ IDENTIFIER .
 
     $default  reduce using rule 26 (command)
 
 
-state 61
+state 60
 
    27 command: WRITE exp .
    47 exp: exp . '+' exp
@@ -760,23 +745,23 @@ state 61
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 27 (command)
 
 
-state 62
+state 61
 
    24 commands: commands command ';' .
 
     $default  reduce using rule 24 (commands)
 
 
-state 63
+state 62
 
    15 function: Function $@7 id_funct declarations $@8 LET declarations $@9 DO commands . END
    24 commands: commands . command ';'
@@ -784,15 +769,16 @@ state 63
     IDENTIFIER  shift, and go to state 40
     IF          shift, and go to state 41
     WHILE       shift, and go to state 42
-    SKIP        shift, and go to state 43
+    Procedure   shift, and go to state 43
+    SKIP        shift, and go to state 44
     END         shift, and go to state 79
-    READ        shift, and go to state 45
-    WRITE       shift, and go to state 46
+    READ        shift, and go to state 46
+    WRITE       shift, and go to state 47
 
-    command  go to state 47
+    command  go to state 48
 
 
-state 64
+state 63
 
    11 procedure: Procedure $@4 id_proc declarations $@5 LET declarations $@6 DO commands . END
    24 commands: commands . command ';'
@@ -800,15 +786,16 @@ state 64
     IDENTIFIER  shift, and go to state 40
     IF          shift, and go to state 41
     WHILE       shift, and go to state 42
-    SKIP        shift, and go to state 43
+    Procedure   shift, and go to state 43
+    SKIP        shift, and go to state 44
     END         shift, and go to state 80
-    READ        shift, and go to state 45
-    WRITE       shift, and go to state 46
+    READ        shift, and go to state 46
+    WRITE       shift, and go to state 47
 
-    command  go to state 47
+    command  go to state 48
 
 
-state 65
+state 64
 
    28 command: IDENTIFIER ASSGNOP exp .
    47 exp: exp . '+' exp
@@ -817,47 +804,16 @@ state 65
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 28 (command)
 
 
-state 66
-
-   42 variables: '(' llist_exp . exp ')'
-   44 llist_exp: llist_exp . exp ','
-
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
-
-    exp  go to state 81
-
-
-state 67
-
-   41 variables: llist_exp exp . '.'
-   44 llist_exp: llist_exp exp . ','
-   47 exp: exp . '+' exp
-   48    | exp . '-' exp
-   49    | exp . '*' exp
-   50    | exp . '/' exp
-   51    | exp . '^' exp
-
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
-    '.'  shift, and go to state 82
-    ','  shift, and go to state 83
-
-
-state 68
+state 65
 
    47 exp: exp . '+' exp
    48    | exp . '-' exp
@@ -866,116 +822,144 @@ state 68
    51    | exp . '^' exp
    52    | '(' exp . ')'
 
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
-    ')'  shift, and go to state 84
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
+    ')'  shift, and go to state 81
+
+
+state 66
+
+   32 command: IF bool_exp $@10 . THEN commands $@11 ELSE $@12 commands FI
+
+    THEN  shift, and go to state 82
+
+
+state 67
+
+   48 exp: exp '-' . exp
+
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
+
+    exp  go to state 83
+
+
+state 68
+
+   47 exp: exp '+' . exp
+
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
+
+    exp  go to state 84
 
 
 state 69
 
-   32 command: IF bool_exp $@10 . THEN commands $@11 ELSE $@12 commands FI
+   49 exp: exp '*' . exp
 
-    THEN  shift, and go to state 85
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
+
+    exp  go to state 85
 
 
 state 70
 
-   48 exp: exp '-' . exp
+   50 exp: exp '/' . exp
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
     exp  go to state 86
 
 
 state 71
 
-   47 exp: exp '+' . exp
+   51 exp: exp '^' . exp
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
     exp  go to state 87
 
 
 state 72
 
-   49 exp: exp '*' . exp
+   37 bool_exp: exp '<' . exp
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
     exp  go to state 88
 
 
 state 73
 
-   50 exp: exp '/' . exp
+   38 bool_exp: exp '=' . exp
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
     exp  go to state 89
 
 
 state 74
 
-   51 exp: exp '^' . exp
+   39 bool_exp: exp '>' . exp
 
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
 
     exp  go to state 90
 
 
 state 75
 
-   37 bool_exp: exp '<' . exp
-
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
-
-    exp  go to state 91
-
-
-state 76
-
-   38 bool_exp: exp '=' . exp
-
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
-
-    exp  go to state 92
-
-
-state 77
-
-   39 bool_exp: exp '>' . exp
-
-    NUMBER      shift, and go to state 54
-    IDENTIFIER  shift, and go to state 55
-    '('         shift, and go to state 56
-
-    exp  go to state 93
-
-
-state 78
-
    35 command: WHILE $@13 bool_exp . $@14 DO commands END
 
     $default  reduce using rule 34 ($@14)
 
-    $@14  go to state 94
+    $@14  go to state 91
+
+
+state 76
+
+   42 variables: '(' . llist_exp exp ')'
+
+    $default  reduce using rule 43 (llist_exp)
+
+    llist_exp  go to state 92
+
+
+state 77
+
+   36 command: Procedure IDENTIFIER variables .
+
+    $default  reduce using rule 36 (command)
+
+
+state 78
+
+   41 variables: llist_exp . exp '.'
+   44 llist_exp: llist_exp . exp ','
+
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
+
+    exp  go to state 93
 
 
 state 79
@@ -994,54 +978,21 @@ state 80
 
 state 81
 
-   42 variables: '(' llist_exp exp . ')'
-   44 llist_exp: llist_exp exp . ','
-   47 exp: exp . '+' exp
-   48    | exp . '-' exp
-   49    | exp . '*' exp
-   50    | exp . '/' exp
-   51    | exp . '^' exp
-
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
-    ')'  shift, and go to state 95
-    ','  shift, and go to state 83
-
-
-state 82
-
-   41 variables: llist_exp exp '.' .
-
-    $default  reduce using rule 41 (variables)
-
-
-state 83
-
-   44 llist_exp: llist_exp exp ',' .
-
-    $default  reduce using rule 44 (llist_exp)
-
-
-state 84
-
    52 exp: '(' exp ')' .
 
     $default  reduce using rule 52 (exp)
 
 
-state 85
+state 82
 
    32 command: IF bool_exp $@10 THEN . commands $@11 ELSE $@12 commands FI
 
     $default  reduce using rule 23 (commands)
 
-    commands  go to state 96
+    commands  go to state 94
 
 
-state 86
+state 83
 
    47 exp: exp . '+' exp
    48    | exp . '-' exp
@@ -1050,14 +1001,14 @@ state 86
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 48 (exp)
 
 
-state 87
+state 84
 
    47 exp: exp . '+' exp
    47    | exp '+' exp .
@@ -1066,14 +1017,14 @@ state 87
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 47 (exp)
 
 
-state 88
+state 85
 
    47 exp: exp . '+' exp
    48    | exp . '-' exp
@@ -1082,12 +1033,12 @@ state 88
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '^'  shift, and go to state 74
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 49 (exp)
 
 
-state 89
+state 86
 
    47 exp: exp . '+' exp
    48    | exp . '-' exp
@@ -1096,12 +1047,12 @@ state 89
    50    | exp '/' exp .
    51    | exp . '^' exp
 
-    '^'  shift, and go to state 74
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 50 (exp)
 
 
-state 90
+state 87
 
    47 exp: exp . '+' exp
    48    | exp . '-' exp
@@ -1110,12 +1061,12 @@ state 90
    51    | exp . '^' exp
    51    | exp '^' exp .
 
-    '^'  shift, and go to state 74
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 51 (exp)
 
 
-state 91
+state 88
 
    37 bool_exp: exp '<' exp .
    47 exp: exp . '+' exp
@@ -1124,16 +1075,16 @@ state 91
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 37 (bool_exp)
 
 
-state 92
+state 89
 
    38 bool_exp: exp '=' exp .
    47 exp: exp . '+' exp
@@ -1142,16 +1093,16 @@ state 92
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 38 (bool_exp)
 
 
-state 93
+state 90
 
    39 bool_exp: exp '>' exp .
    47 exp: exp . '+' exp
@@ -1160,30 +1111,54 @@ state 93
    50    | exp . '/' exp
    51    | exp . '^' exp
 
-    '-'  shift, and go to state 70
-    '+'  shift, and go to state 71
-    '*'  shift, and go to state 72
-    '/'  shift, and go to state 73
-    '^'  shift, and go to state 74
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
 
     $default  reduce using rule 39 (bool_exp)
 
 
-state 94
+state 91
 
    35 command: WHILE $@13 bool_exp $@14 . DO commands END
 
-    DO  shift, and go to state 97
+    DO  shift, and go to state 95
 
 
-state 95
+state 92
 
-   42 variables: '(' llist_exp exp ')' .
+   42 variables: '(' llist_exp . exp ')'
+   44 llist_exp: llist_exp . exp ','
 
-    $default  reduce using rule 42 (variables)
+    NUMBER      shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    '('         shift, and go to state 54
+
+    exp  go to state 96
 
 
-state 96
+state 93
+
+   41 variables: llist_exp exp . '.'
+   44 llist_exp: llist_exp exp . ','
+   47 exp: exp . '+' exp
+   48    | exp . '-' exp
+   49    | exp . '*' exp
+   50    | exp . '/' exp
+   51    | exp . '^' exp
+
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
+    '.'  shift, and go to state 97
+    ','  shift, and go to state 98
+
+
+state 94
 
    24 commands: commands . command ';'
    32 command: IF bool_exp $@10 THEN commands . $@11 ELSE $@12 commands FI
@@ -1191,33 +1166,67 @@ state 96
     IDENTIFIER  shift, and go to state 40
     IF          shift, and go to state 41
     WHILE       shift, and go to state 42
-    SKIP        shift, and go to state 43
-    READ        shift, and go to state 45
-    WRITE       shift, and go to state 46
+    Procedure   shift, and go to state 43
+    SKIP        shift, and go to state 44
+    READ        shift, and go to state 46
+    WRITE       shift, and go to state 47
 
     $default  reduce using rule 30 ($@11)
 
-    command  go to state 47
-    $@11     go to state 98
+    command  go to state 48
+    $@11     go to state 99
 
 
-state 97
+state 95
 
    35 command: WHILE $@13 bool_exp $@14 DO . commands END
 
     $default  reduce using rule 23 (commands)
 
-    commands  go to state 99
+    commands  go to state 100
+
+
+state 96
+
+   42 variables: '(' llist_exp exp . ')'
+   44 llist_exp: llist_exp exp . ','
+   47 exp: exp . '+' exp
+   48    | exp . '-' exp
+   49    | exp . '*' exp
+   50    | exp . '/' exp
+   51    | exp . '^' exp
+
+    '-'  shift, and go to state 67
+    '+'  shift, and go to state 68
+    '*'  shift, and go to state 69
+    '/'  shift, and go to state 70
+    '^'  shift, and go to state 71
+    ')'  shift, and go to state 101
+    ','  shift, and go to state 98
+
+
+state 97
+
+   41 variables: llist_exp exp '.' .
+
+    $default  reduce using rule 41 (variables)
 
 
 state 98
 
-   32 command: IF bool_exp $@10 THEN commands $@11 . ELSE $@12 commands FI
+   44 llist_exp: llist_exp exp ',' .
 
-    ELSE  shift, and go to state 100
+    $default  reduce using rule 44 (llist_exp)
 
 
 state 99
+
+   32 command: IF bool_exp $@10 THEN commands $@11 . ELSE $@12 commands FI
+
+    ELSE  shift, and go to state 102
+
+
+state 100
 
    24 commands: commands . command ';'
    35 command: WHILE $@13 bool_exp $@14 DO commands . END
@@ -1225,40 +1234,48 @@ state 99
     IDENTIFIER  shift, and go to state 40
     IF          shift, and go to state 41
     WHILE       shift, and go to state 42
-    SKIP        shift, and go to state 43
-    END         shift, and go to state 101
-    READ        shift, and go to state 45
-    WRITE       shift, and go to state 46
+    Procedure   shift, and go to state 43
+    SKIP        shift, and go to state 44
+    END         shift, and go to state 103
+    READ        shift, and go to state 46
+    WRITE       shift, and go to state 47
 
-    command  go to state 47
+    command  go to state 48
 
 
-state 100
+state 101
+
+   42 variables: '(' llist_exp exp ')' .
+
+    $default  reduce using rule 42 (variables)
+
+
+state 102
 
    32 command: IF bool_exp $@10 THEN commands $@11 ELSE . $@12 commands FI
 
     $default  reduce using rule 31 ($@12)
 
-    $@12  go to state 102
+    $@12  go to state 104
 
 
-state 101
+state 103
 
    35 command: WHILE $@13 bool_exp $@14 DO commands END .
 
     $default  reduce using rule 35 (command)
 
 
-state 102
+state 104
 
    32 command: IF bool_exp $@10 THEN commands $@11 ELSE $@12 . commands FI
 
     $default  reduce using rule 23 (commands)
 
-    commands  go to state 103
+    commands  go to state 105
 
 
-state 103
+state 105
 
    24 commands: commands . command ';'
    32 command: IF bool_exp $@10 THEN commands $@11 ELSE $@12 commands . FI
@@ -1266,15 +1283,16 @@ state 103
     IDENTIFIER  shift, and go to state 40
     IF          shift, and go to state 41
     WHILE       shift, and go to state 42
-    SKIP        shift, and go to state 43
-    FI          shift, and go to state 104
-    READ        shift, and go to state 45
-    WRITE       shift, and go to state 46
+    Procedure   shift, and go to state 43
+    SKIP        shift, and go to state 44
+    FI          shift, and go to state 106
+    READ        shift, and go to state 46
+    WRITE       shift, and go to state 47
 
-    command  go to state 47
+    command  go to state 48
 
 
-state 104
+state 106
 
    32 command: IF bool_exp $@10 THEN commands $@11 ELSE $@12 commands FI .
 

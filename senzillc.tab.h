@@ -63,21 +63,22 @@
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union 
 /* Line 2068 of yacc.c  */
-#line 69 "senzillc.y"
+#line 78 "senzillc.y"
 semrec
 {
 
 /* Line 2068 of yacc.c  */
-#line 70 "senzillc.y"
+#line 79 "senzillc.y"
  
    int intval; /* Integer values */ 
    char *id; /* Identifiers */ 
    struct lbs *lbls; /* For backpatching */ 
+   struct fp *fps; /* For backpatching */ 
 
 
 
 /* Line 2068 of yacc.c  */
-#line 81 "senzillc.tab.h"
+#line 82 "senzillc.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
